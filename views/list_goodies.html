@@ -1,0 +1,50 @@
+<?php 
+// Несмотря на то, что это файл html, он является полностью кодом php c некоторыми вкраплениями html не выходя из php. - Дм.С.
+// Эта страница включена с помощью сценария browse.php
+// На этой странице отображаются доступные сувениры
+// Эта страница будет использовать результат выполнения запроса $r
+// Этот запрос возвращает массив, включающий следующие элементы: description, image, sku, name и stock
+
+// Заголовок отображается только один раз
+$header = false; 
+
+// Включаем функции
+include('./includes/product_functions.inc.php');
+
+// Циклический обход результатов:
+while ($row = mysqli_fetch_array($r, MYSQLI_ASSOC)) {
+
+	// Если заголовок не отображается, создайте его
+	if (!$header) {
+		echo BOX_BEGIN; 
+
+		echo '<h2>' . $category . '</h2>
+		          	<div class="img-box">
+		             	<p><img alt="' . $category . '" src="/products/' . $row['g_image'] . '" />'. $row['g_description'] . '</p>
+		          </div>';
+
+		echo BOX_END;
+
+		echo '<p><br clear="all" /></p>';
+		
+		echo BOX_BEGIN; 
+
+		// Заголовок отображен
+		$header = true;
+
+	} // завершение блока IF для $header
+	
+	// Отображение каждого товара
+	// Там, где "Доступно", можно использовать просто $row['stock'] для указания точного числа на складе - Дм.С.
+	// А также вместо <strong>Цена:</strong> ' . $row['price'] . '<br /> теперь вставлена функция get_price() - ДмС
+	echo '<h3>' . $row['name'] . '</h3>
+		<div class="img-box"><p><img alt="' . $row['name'] . '" src="/products/' . $row['image']  . '" />' . $row['description'] . '<br />'		
+		. get_price($type, $row['price'], $row['sale_price']) . 
+		'<strong>Доступно:</strong> ' . get_stock_status($row['stock']) . '</p>
+		<p><a href="/cart.php?sku=' . $row['sku'] . '&action=add" class="button">Добавить в корзину</a></p></div>';
+  	
+} // завершение цикла WHILE 
+
+echo '<p> <br clear="all" /></p>';
+
+echo BOX_END;

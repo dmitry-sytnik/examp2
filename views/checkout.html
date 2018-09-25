@@ -1,0 +1,59 @@
+<div align="center"><img src="/images/checkout_indicator1.png" /></div>
+<br clear="all" />
+
+<?php // отображение корзины
+include('./views/checkout_cart.html');
+// Ссылка на файл является относительной по отношению к сценарию checkout.php
+
+echo BOX_BEGIN;
+?> 
+<h2>Информация о доставке</h2>
+<p>Пожалуйста, введите информацию о доставке. На следующей странице укажите платежную информацию и завершите составление заказа. Проверьте, чтобы адрес выставления счета и адрес доставки, указанные в первом блоке, совпадали. С помощью символа <span class="required">*</span> отмечаются обязательные для заполнения поля. </p>
+<form action="/checkout.php" method="POST">
+<?php // Подключение сценария, определяющего функции работы с формой
+include('./includes/form_functions.inc.php');
+?>
+	<fieldset>
+		<div class="field"><label for="use"><strong>Использовать этот же адрес для выставления счета?</strong></label>
+		<br /><input type="checkbox" name="use" value="Y" id="use" <?php if (isset($_POST['use'])) echo 'checked="checked" ';?>/></div>
+		
+		<div class="field"><label for="first_name"><strong>Имя <span class="required">*</span></strong></label>
+		<br /><?php create_form_input('first_name', 'text', $shipping_errors); ?></div>
+		<?php
+		// функция create_form_input() создает текстовое поле под названием first_name
+		//массив $shipping_errors инициализируется с помощью сценария checkout.php
+		?>
+		
+		<div class="field"><label for="last_name"><strong>Фамилия <span class="required">*</span></strong></label>
+		<br /><?php create_form_input('last_name', 'text', $shipping_errors); ?></div>
+		
+		<div class="field"><label for="address1"><strong>Адрес <span class="required">*</span></strong></label>
+		<br /><?php create_form_input('address1', 'text', $shipping_errors); ?></div>
+		
+		<div class="field"><label for="address2"><strong>Адрес, продолжение</strong></label>
+		<br /><?php create_form_input('address2', 'text', $shipping_errors); ?></div>
+		
+		<div class="field"><label for="city"><strong>Город <span class="required">*</span></strong></label>
+		<br /><?php create_form_input('city', 'text', $shipping_errors); ?></div>
+		
+		<div class="field"><label for="state"><strong>Штат <span class="required">*</span></strong> </label>
+		<br /><?php create_form_input('state', 'select', $shipping_errors); ?></div>
+		
+		<div class="field"><label for="zip"><strong>Почтовый индекс <span class="required">*</span></strong></label>
+		<br /><?php create_form_input('zip', 'text', $shipping_errors); ?></div>
+		
+		<div class="field"><label for="phone"><strong>Телефонный номер <span class="required">*</span></strong></label>
+		<br /><?php create_form_input('phone', 'text', $shipping_errors); ?></div>
+
+		<div class="field"><label for="email"><strong>Адрес электронной почты <span class="required">*</span></strong></label>
+		<br /><?php create_form_input('email', 'text', $shipping_errors); ?></div>
+		
+		<br clear="all" />
+		
+		<div align="center">
+		<input type="submit" value="Перейти к оплате" class="button" />
+		</div>
+	</fieldset>
+</form>
+
+<?php echo BOX_END; ?>

@@ -1,0 +1,97 @@
+<?php 
+
+echo BOX_BEGIN; 
+
+echo '<h2>Ваша корзина</h2>
+<table border="0" cellspacing="8" cellpadding="6" width="100%">
+	<tr>
+		<th align="center">Товар</th>
+		<th align="center">Кол-во</th>
+		<th align="right">Цена</th>
+		<th align="right">Промеж. итог</th>
+	</tr>';
+
+// Отображение товаров
+
+// Подключение сценария, определяющего набор функций-утилит
+include('./includes/product_functions.inc.php');
+
+// Инициализация итога
+$total = 0;
+
+// Для удаления проблемных позиций
+$remove = array();
+
+// Выборка каждого товара
+while ($row = mysqli_fetch_array($r, MYSQLI_ASSOC)) {
+	
+	// Проверка наличия товара на складе
+	if ($row['stock'] < $row['quantity']) {
+
+		echo '<tr class="error"><td colspan="4" align="center">Осталось на складе ' . $row['stock'] . ' ' . $row['name'] . '. Этот товар удален из корзины и перемещен в список желаний.</td></tr>';
+
+		$remove[$row['sku']] = $row['quantity'];
+		// В этом массиве $remove значение, присвоенное $row['sku'], будет ключом, а - $row['quantity'] будет значением этого ключа.
+		
+	} else {
+
+		// Настройка корректной цены
+		$price = get_just_price($row['price'], $row['sale_price']);
+
+		// Вычисление промежуточного итога
+		$subtotal = $price * $row['quantity'];
+
+		// Печать строки таблицы
+		echo '<tr><td>' . $row['category'] . '::' . $row['name'] . '</td>
+			<td align="center">' . $row['quantity'] . '</td>
+			<td align="right">$' . $price . '</td>
+			<td align="right">$' . number_format($subtotal, 2) . '</td>
+		</tr>
+		';
+
+		// Добавление промежуточного итога в общую сумму
+	  	$total += $subtotal;
+
+	}
+
+} // конец цикла WHILE 
+
+// Добавление стоимости доставки
+$shipping = get_shipping($total);
+$total += $shipping;
+echo '<tr>
+	<td colspan="2"> </td><th align="right">Упаковка и доставка</th>
+	<td align="right">$' . number_format($shipping, 2) . '</td>
+	</tr>';
+
+// Сохранение сведений о доставке в сеансе
+$_SESSION['shipping'] = $shipping;
+
+// Отображение общей суммы
+echo '<tr>
+	<td colspan="2"> </td><th align="right">Общая сумма</th>
+	<td align="right">$' . number_format($total, 2) . '</td>
+	<td>&nbsp;</td>
+	</tr>';
+
+// Если массив $remove не пуст, удаление проблемных позиций (на складе меньше, чем хотят купить)
+if (!empty($remove)) {
+
+	// Очистка результатов (..предыдущих запросов хранимых процедур. Хранимые процедуры возвращают данные с помощью SELECT и результаты, что всё выполнено успешно. Вот эти вторые результаты необходимо очистить перед вызовом новых процедур во избежание ошибки "commands out of sync" - Дм.С).
+	mysqli_next_result($dbc);
+
+	// Циклический просмотр элементов массива
+	foreach ($remove as $sku => $qty) {
+
+		list($sp_type, $pid) = parse_sku($sku);
+		// $sku (например,G21) разбивается на $sp_type(G) и $pid(21). Точнее: $sku разбивается пользовательской функцией parse_sku() на два значения в массиве, которые потом распределяются по списку php-функцией list().
+
+		// Перемещение позиции в список желаний
+		$r = mysqli_multi_query($dbc, "CALL add_to_wish_list('$uid', '$sp_type', $pid, $qty);CALL remove_from_cart('$uid', '$sp_type', $pid)");		
+	} // конец цикла FOREACH
+	
+} // конец блока IF для $remove
+
+echo '</table>';
+
+echo BOX_END;

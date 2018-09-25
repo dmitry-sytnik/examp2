@@ -1,0 +1,21 @@
+﻿<IfModule mod_rewrite.c>
+Options -MultiViews
+RewriteEngine on
+
+# Для основных категорий:
+RewriteRule ^shop/(coffee|goodies)/?$ shop.php?type=$1
+
+# Для скидок:
+RewriteRule ^shop/sales/?$ /sales.php
+
+# Для отдельных товаров:
+RewriteRule ^browse/(coffee|goodies)/([A-Za-z\+\-]+)/([0-9]+)/?$ browse.php?type=$1&category=$2&id=$3
+
+# Для HTTPS-страниц:
+RewriteCond %{HTTPS} off
+RewriteRule ^(checkout\.php|billing\.php|final\.php|admin/(.*))$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+</IfModule>
+
+# Запрет на отображение содержимого каталога при отсутствии индексного файла
+Options -Indexes

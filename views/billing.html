@@ -1,0 +1,57 @@
+<div align="center"><img src="/images/checkout_indicator2.png" /></div>
+<br clear="all" />
+
+<?php //отображение корзины
+include('./views/checkout_cart.html');
+
+echo BOX_BEGIN;
+echo '<div class="inner"><h2>Платежная информация</h2><p>Пожалуйста, введите платежную информацию. Затем щелкните на кнопке, чтобы завершить оформление заказа. В целях повышения безопасности мы не храним вашу платежную информацию в системе. Мы принимаем к оплате карты Visa, MasterCard, American Express и Discover.</p>';
+if (isset($message)) echo "<p class=\"error\">$message</p>";
+echo '<form action="/billing.php" method="POST" id="billing_form">';
+
+include('./includes/form_functions.inc.php');
+?>
+
+<fieldset>
+	<div class="field"><label for="cc_number"><strong>Номер карты</strong></label>
+	<br /><?php create_form_input('cc_number', 'text', $billing_errors, 'POST', array('autocomplete' => 'off')); ?></div>
+	
+	<div class="field"><label for="exp_date"><strong>Дата окончания действия карты</strong></label>
+	<br /><?php create_form_input('cc_exp_month', 'select', $billing_errors); ?><?php create_form_input('cc_exp_year', 'select', $billing_errors); ?></div>
+	
+	<div class="field"><label for="cc_cvv"><strong>Код CVV</strong></label>
+	<br /><?php create_form_input('cc_cvv', 'text', $billing_errors, 'POST', array('autocomplete' => 'off')); ?></div>
+	
+	<div class="field"><label for="cc_first_name"><strong>Имя </strong></label>
+	<br /><?php create_form_input('cc_first_name', 'text', $billing_errors, $values); ?></div>
+	
+	<div class="field"><label for="cc_last_name"><strong>Фамилия </strong></label>
+	<br /><?php create_form_input('cc_last_name', 'text', $billing_errors, $values); ?></div>
+	
+	<div class="field"><label for="cc_address"><strong>Адрес </strong></label>
+	<br /><?php create_form_input('cc_address', 'text', $billing_errors, $values); ?></div>
+	
+	<div class="field"><label for="cc_city"><strong>Город </strong></label>
+	<br /><?php create_form_input('cc_city', 'text', $billing_errors, $values); ?></div>
+	
+	<div class="field"><label for="cc_state"><strong>Штат </strong></label>
+	<br /><?php create_form_input('cc_state', 'select', $billing_errors, $values); ?></div>
+	
+	<div class="field"><label for="cc_zip"><strong>Почтовый индекс </strong></label>
+	<br /><?php create_form_input('cc_zip', 'text', $billing_errors, $values); ?></div>
+	
+	<br clear="all" />
+	
+<div align="center" id="submit_div"><input type="submit" value="Разместить заказ" class="button" /></div></fieldset></form>
+<div>После щелчка на этой кнопке формирование заказа будет завершено, а с вашей кредитной карты будет списана требуемая сумма.</div>
+<?php echo BOX_END; ?>
+
+<script type="text/javascript">  
+$(function() {
+  $('#billing_form').submit(function() {
+      $('input[type=submit]', this).attr('disabled', 'disabled');
+     $('#submit_div').html('<p class="button">Обработка...</p>');
+     return false;
+  });
+});   
+</script>

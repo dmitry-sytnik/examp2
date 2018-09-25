@@ -1,0 +1,43 @@
+<?php 
+
+// Эта страница включена с помощью сценария browse.php
+// Эта страница отображает перечень доступных кофейных товаров
+// Эта страница будет использовать результат выполнения запроса $r.
+// Запрос возвращает массив, включающий следующие элементы: description, image, sku, name и stock
+
+// Лишь один раз отображается заголовок
+$header = false;
+
+// Добавлено позже, в главе 8
+include('./includes/product_functions.inc.php');
+
+// Циклический просмотр результатов
+while ($row = mysqli_fetch_array($r, MYSQLI_ASSOC)) {
+	
+	// Если заголовок не отображается, создайте его
+	if (!$header) {
+
+		echo BOX_BEGIN; 
+
+		echo '<h2>' . $category . '</h2>
+			<div class="img-box">
+			<p><img alt="' . $category . '" src="/products/' . $row['image'] . '" />' . $row['description'] . '</p>
+			<p><small>Все отображаемые товары доступны.</small>';
+
+		echo '<form action="/cart.php" method="get">
+			<input type="hidden" name="action" value="add" />			
+			<select name="sku">';
+
+		// Заголовок отображен
+		$header = true;
+
+	} // конец блока IF для $header
+	
+	// Создание каждого параметра
+	echo '<option value="' . $row['sku'] . '">' . $row['name'] . get_price($type, $row['price'], $row['sale_price']) . '</option>';
+	
+} // завершение цикла WHILE
+
+echo '</select> <input type="submit" value="Добавить в корзину" class="button" /></p></form></div>';
+
+echo BOX_END;

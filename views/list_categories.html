@@ -1,0 +1,25 @@
+﻿<?php 
+// Эта страница включена с помощью сценария shop.php
+// На этой странице отображаются отдельные категории
+// Эта страница будет использовать результат выполнения запроса $r
+// Запрос возвращает следующий массив: код, категория, описание и изображение
+
+// Начало окна HTML
+echo BOX_BEGIN;
+
+echo '<ul class="items-list">';
+
+while ($row = mysqli_fetch_array($r, MYSQLI_ASSOC)) { // выборка каждой позиции
+	
+	// Печать позиции в коде HTML:
+	echo '<li><h3>' . $row['category'] . ' </h3>
+                <p><img alt="' . $row['category'] . '" src="/products/' . $row['image'] . '" />' . $row['description'] . '<br />
+                <a href="/browse/' . $type . '/' . urlencode($row['category']) . '/' . $row['id'] . '" class="h4">Просмотреть эту категорию</a></p>
+             </li>';	
+
+}
+
+echo '</ul>';
+
+// Завершение окна HTML
+echo BOX_END;

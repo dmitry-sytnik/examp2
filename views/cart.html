@@ -1,0 +1,81 @@
+<?php echo BOX_BEGIN; ?>
+
+<h2>Ваша корзина</h2>
+<p>Пожалуйста, используйте эту форму для обновления корзины. Можно изменять количество позиций, перемещать позиции в список желаний, чтобы покупать их в будущем, либо полностью удалять позиции. Стоимость доставки и обработки вычисляется на основании общей суммы заказа. Как только вы будете готовы завершить покупку, щелкните на кнопке Оформление заказа, чтобы перейти на защищенную страницу для дальнейшей обработки.</p>
+
+<form action="/cart.php" method="POST">
+<table border="0" cellspacing="8" cellpadding="6">
+	<tr>
+		<th align="center">Товар</th>
+		<th align="center">Кол-во</th>
+		<th align="right">Цена</th>
+		<th align="right">Промеж. итог</th>
+		<th align="center">Параметры</th>
+	</tr>
+<?php // отображение товаров
+
+// Инициализация подсчета итога
+$total = 0;
+
+// Выборка каждого товара
+while ($row = mysqli_fetch_array($r, MYSQLI_ASSOC)) {
+	
+	// Получение корректной цены (скидка или нет)
+	$price = get_just_price($row['price'], $row['sale_price']);
+	
+	// Вычисление промежуточного итога
+	$subtotal = $price * $row['quantity'];
+	
+	// Печать строки таблицы
+	echo '<tr><td>' . $row['category'] . '::' . $row['name'] . '</td>
+		<td align="center"><input type="text" name="quantity[' . $row['sku'] . ']" value="' . $row['quantity'] . '" size="2" class="small" /></td>
+		<td align="right">$' . $price . '</td>
+		<td align="right">$' . number_format($subtotal, 2) . '</td>
+		<td align="right"><a href="/wishlist.php?sku=' . $row['sku'] . '&action=move&qty=' . $row['quantity'] .'">Перемещение в список желаний</a><br /><a href="/cart.php?sku=' . $row['sku'] . '&action=remove">Удаление из корзины</a></td>
+	</tr>
+	';
+	
+	// Проверка наличия товара на складе
+	if ($row['stock'] < $row['quantity']) {
+		echo '<tr class="error"><td colspan="5" align="center">На складе осталось только ' . $row['stock'] . ' ' . $row['name'] . '. Пожалуйста, обновите количество позиций, удалите позицию полностью или переместите ее в список желаний.</td></tr>';
+	}
+	
+	// Добавление промежуточного итога в общую сумму
+  	$total += $subtotal;
+
+} // завершение цикла WHILE
+
+
+
+
+// Добавление стоимости доставки
+// Добавлено в главе 9
+ $shipping = get_shipping($total);
+ $total += $shipping;
+ echo '<tr>
+	<td colspan="3" align="right"><strong>Упаковка и доставка</strong></td>
+	<td align="right">$' . number_format($shipping, 2) . '</td>
+	<td>&nbsp;</td>
+ </tr>
+ ';
+
+
+
+
+// Отображение общего итога одной строкой в конце таблицы (в любом случае, после цикла While)
+echo '<tr>
+	<td colspan="3" align="right"><strong>Общий итог</strong></td>
+	<td align="right">$' . number_format($total, 2) . '</td>
+	<td>&nbsp;</td>
+</tr>
+';
+// Завершение таблицы и добавление двух кнопок
+echo '</table>
+<br />
+<p align="center">
+<input type="submit" value="Изменить количество" class="button" /></form></p>
+<br /><p align="center"><a href="https://' . BASE_URL . 'checkout.php" class="button">Оформление заказа</a></p>';
+
+
+echo BOX_END; 
+?>

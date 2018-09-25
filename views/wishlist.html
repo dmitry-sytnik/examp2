@@ -1,0 +1,38 @@
+<?php echo BOX_BEGIN; ?>
+<h2>Ваш список желаний</h2>
+<p>Используйте эту форму для обновления вашего списка желаний. Вы можете изменять количество позиций, перемещать покупаемые позиции в корзину либо удалять позциии.</p>
+<form action="/wishlist.php" method="POST">
+<table border="0" cellspacing="8" cellpadding="6">
+	<tr>
+		<th align="center">Товар</th>
+		<th align="center">Кол-во</th>
+		<th align="right">Цена</th>
+		<th align="right">Промеж. итог</th>
+		<th align="center">Параметры</th>
+	</tr>
+<?php // отображение позиций
+
+// Выборка каждой позиции
+while ($row = mysqli_fetch_array($r, MYSQLI_ASSOC)) {
+	$price = get_just_price($row['price'], $row['sale_price']);
+	$subtotal = $price * $row['quantity'];
+	echo '<tr>
+		<td>' . $row['category'] . '::' . $row['name'] . '</td>
+		<td align="center"><input type="text" name="quantity[' . $row['sku'] . ']" value="' . $row['quantity'] . '" size="2" class="small" /></td>
+		<td align="right">$' . number_format($price, 2) . '</td>
+		<td align="right">$' . number_format($subtotal, 2) . '</td>
+		<td align="right"><a href="/cart.php?sku=' . $row['sku'] . '&action=move&qty=' . $row['quantity'] .'">Переместить в корзину</a><br /><a href="/wishlist.php?sku=' . $row['sku'] . '&action=remove">Удаление из списка желаний</a></td>
+	</tr>
+	';
+	
+	// Проверка наличия на складе
+	if ( ($row['stock'] > 0) && ($row['stock'] < 10)) {
+		echo '<tr class="error"><td colspan="5" align="center">На складе осталось только ' . $row['stock'] . ' ' . $row['name'] . '.</td></tr>';
+	}
+
+} // завершение цикла WHILE 
+
+echo '</table><p align="center"><input type="submit" value="Изменить количество" class="button" /></form></p>';
+
+echo BOX_END; 
+?>

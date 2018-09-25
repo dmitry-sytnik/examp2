@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><?php // если заголовок страницы не задан, используется заголовок, заданный по умолчанию...
+	if (isset($page_title)) { 
+			echo $page_title; 
+	} else { 
+			echo 'Кофе - Не хотите ли чашечку ароматного напитка?'; 
+	} 
+	?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="description" content="Здесь находится описание" /> 
+<meta name="keywords" content="сюда нужно поместить ключевое слово" /> 
+<meta name="author" content="Templates.com - провайдер шаблонов сайтов" /> 
+   <link href="../css/style.css" rel="stylesheet" type="text/css" /> <!-- тут исправил на ../css/style.css вместо "/css/style.css" - Дм.С. -->
+<!--[если IE 7]>
+   <script type="text/javascript" src="/js/ie_png.js"></script>
+   <script type="text/javascript">
+       ie_png.fix('.png, .logo h1, .box .left-top-corner, .box .right-top-corner, .box .left-bot-corner, .box .right-bot-corner, .box .border-left, .box .border-right, .box .border-top, .box .border-bot, .box .inner, .special dd, #contacts-form input, #contacts-form textarea');
+   </script>
+<![endif]-->
+</head>
+
+<body id="page1">
+   <!-- заголовок -->
+   <div id="header">
+      <div class="container">
+         <div class="wrapper">
+            <ul class="top-links">
+               <li><a href="http://<?php echo BASE_URL; ?>/index.php" class="first"><img alt="" src="/images/icon-home.gif" /></a></li>
+               <li><a href="http://<?php echo BASE_URL; ?>/cart.php"><img alt="" src="/images/icon-cart.gif" /></a></li>
+               <li><a href="http://<?php echo BASE_URL; ?>/contact.php"><img alt="" src="/images/icon-mail.gif" /></a></li>
+               <li><a href="http://<?php echo BASE_URL; ?>/sitemap.php"><img alt="" src="/images/icon-map.gif" /></a></li>
+            </ul>
+            <div class="logo">
+               <h1><a href="http://<?php echo BASE_URL; ?>/index.php">Кофе</a><span>Не хотите ли чашечку ароматного напитка?</span></h1>
+            </div>
+         </div>
+            
+            <!-- МЕНЮ -->
+            
+            <!-- КОНЕЦ МЕНЮ -->
+            
+      </div>
+   </div>
+   <!-- контент -->
+   <div id="content">
+      <div class="container">
+         <div class="inside">

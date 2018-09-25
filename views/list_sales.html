@@ -1,0 +1,27 @@
+<?php 
+
+// Эта страница включена с помощью сценария sales.php
+// Эта страница отображает товары, продаваемые со скидкой
+// Эта страница будет использовать результат выполнения запроса $r
+// Запрос возвращает массив, включающий следующие элементы: description, image, sku, name и stock
+
+// Будет добавлено в главе 8
+include('./includes/product_functions.inc.php');
+
+echo BOX_BEGIN;
+
+echo '<h2>Товары со скидкой</h2>';
+
+// Циклический просмотр каждой позиции
+while ($row = mysqli_fetch_array($r, MYSQLI_ASSOC)) {
+	
+	echo '<h3 id="' . $row['sku'] . '">' . $row['category'] . '::' . $row['name'] .'</h3>
+  	<div class="img-box">
+     	<p><img alt="' . $row['name'] . '" src="/products/' . $row['image']  . '" />' . $row['description'] . '<br />' . 
+		get_price('goodies', $row['price'], $row['sale_price']) . '
+		<strong>Доступно:</strong> ' . get_stock_status($row['stock']) . '</p>
+    <p><a href="/cart.php?sku=' . $row['sku'] . '&action=add" class="button">Добавить в корзину</a></p></div>';
+					
+}
+
+echo BOX_END;
